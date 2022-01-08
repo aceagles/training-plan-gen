@@ -11,6 +11,7 @@ def generate_weekly_totals(peakDate, peakVolume, startVolume, startDate = dateti
     
     # Calculate the ramp - 3 weeks up at ramp rate, 1 week half load, then 3 at ramp rate
     # If peak distance is reached keep steady
+    
     distances = []
     distance = startVolume
     weekCounter = 0
@@ -39,6 +40,7 @@ def generate_daily_distances(total, percent_list):
 
     
 if __name__ == "__main__":
+
     endDate = datetime(2021, 9, 20)
     generate_weekly_totals(endDate, 100,50)
     print(list(generate_daily_distances(50, [0.5, 0.5, 0.1])))
