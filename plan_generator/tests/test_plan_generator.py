@@ -1,1 +1,1 @@
-import plan_generator.apps
+import plan_generatxr.apps
