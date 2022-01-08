@@ -1,0 +1,43 @@
+[flake8]
+max-line-length=120
+select=
+    # https://flake8.pycqa.org/en/latest/user/error-codes.html
+    F
+    # https://pycodestyle.pycqa.org/en/latest/intro.html#error-codes
+    W
+    E
+    # http://www.pydocstyle.org/en/latest/error_codes.html#grouping
+    D
+    # https://github.com/globality-corp/flake8-logging-format
+    G
+    # https://github.com/gforcada/flake8-builtins
+    A
+    # https://pypi.org/project/flake8-isort/
+    I
+    # https://pypi.org/project/flake8-black/
+    BLK
+    # https://pypi.org/project/flake8-print/
+    T
+
+extend-ignore=
+    # Missing docstrng in public module
+    D100
+    # Missing docstring in public package
+    D104
+    # Missing docstring in __init__
+    D105
+    # Missing docstring for magic method
+    D106
+    # Missing docstring for nested public class
+    D107
+    # One-line docstring should fit on one line with quotes
+    D200
+    # Multi-line docstring summary should start at the first line
+    D212
+    # Whitespace before ':'
+    E203
+    #Imported but unused
+    F401
+exclude = 
+    #third party docs that I've not written
+    node_modules
