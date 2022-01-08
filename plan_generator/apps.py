@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class PlangeneratorsConfig(AppConfig):
+class PlanGeneratorConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'planGenerators'
+    name = 'plan_generator'
