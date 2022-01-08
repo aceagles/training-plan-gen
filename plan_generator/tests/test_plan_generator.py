@@ -1,1 +1,1 @@
-import plan_generatxr.apps
+from plan_generator.methods import plan_generation

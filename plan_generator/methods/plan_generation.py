@@ -1,3 +1,4 @@
+import math
 from datetime import datetime, timedelta
 
 
@@ -5,7 +6,7 @@ def generate_weekly_totals(
     peakDate, peakVolume, startVolume, startDate=datetime.now(), rampRate=0.1
 ):
     """
-    Generate a ramping list of weeks for the training plann. Peaking at race day.
+    Generate a ramping list of weeks for the training plan. Peaking at race peakDate
     """
     # Calculate the number of weeks until raceday
     startWeek = startDate - timedelta(days=startDate.weekday())
@@ -22,6 +23,7 @@ def generate_weekly_totals(
         if weekCounter <= 2:
             distances.append(distance)
             distance += distance * rampRate
+            distance = math.floor(min(distance, peakVolume))
             weekCounter += 1
         else:
             distances.append(distance / 2)
@@ -39,11 +41,12 @@ def generate_daily_distances(total, percent_list):
     if sum(percent_list) > 1:
         percent_list[percent_list.index(max(percent_list))] -= sum(percent_list) - 1
 
-    return zip(percent_list, [total * x for x in percent_list])
+    return zip(percent_list, [round(total * x) for x in percent_list])
 
 
 if __name__ == "__main__":
 
-    endDate = datetime(2021, 9, 20)
-    generate_weekly_totals(endDate, 100, 50)
+    endDate = datetime(2022, 3, 20)
+    # print(generate_weekly_totals(endDate, 100, 50))
+
     # print(list(generate_daily_distances(50, [0.5, 0.5, 0.1])))
