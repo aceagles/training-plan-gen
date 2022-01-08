@@ -129,3 +129,9 @@ STATICFILES_DIRS = (os.path.join('static/'), )
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# Django Auth
+
+LOGIN_REDIRECT_URL = "newsfeed"
+LOGIN_URL = 'login'
+LOGOUT_URL = 'logout'
