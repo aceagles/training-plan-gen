@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('plan_generator', '0002_rename_disance_day_distance'),
+        ("plan_generator", "0002_rename_disance_day_distance"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='day',
-            name='time',
+            model_name="day",
+            name="time",
             field=models.DurationField(),
         ),
     ]
