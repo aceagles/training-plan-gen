@@ -23,20 +23,30 @@ class Day(models.Model):
     week = models.ForeignKey(Week, on_delete=models.CASCADE, related_name="days")
     plan_distance = models.FloatField()
     plan_time = models.FloatField()
-    disance = models.FloatField()
-    time = models.FloatField()
+    distance = models.FloatField()
+    time = models.DurationField()
     ascent = models.FloatField()
 
     def update_totals(self):
         self.time = self.activities.aggregate(Sum('duration'))['duration__sum']
-        self.time = self.activities.aggregate(Sum('distance'))['distance__sum']
-        self.time = self.activities.aggregate(Sum('asscent'))['ascent__sum']
+        self.distance = self.activities.aggregate(Sum('distance'))['distance__sum']
+        self.ascent = self.activities.aggregate(Sum('ascent'))['ascent__sum']
+        self.save()
+    
+    def __str__(self):
+        return self.date.strftime("%d/%m/%Y")
 
 class Activity(models.Model):
     start_time = models.DateTimeField()
     duration = models.DurationField()
     distance = models.FloatField()
     ascent = models.FloatField()
+    day = models.ForeignKey(Day, on_delete=models.CASCADE, related_name="activities")
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.day.update_totals()
+
 
 class StravaActivity(Activity):
     url = models.URLField()
