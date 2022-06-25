@@ -8,13 +8,32 @@ from toolkit.time_funcs import get_part_of_day
 
 
 class TrainingPlan(models.Model):
-
+    class VolMetric(models.TextChoices):
+        TIME = "TIME", "Time" 
+        DISTANCE = "DISTANCE", "Distance"
+        ASCENT = "ASCENT", "Ascent"
+    
     start_volume = models.FloatField()
+    end_volume = models.FloatField()
+    volume_metric = models.CharField(max_length=30, choices=VolMetric.choices)
 
 
 class Week(models.Model):
+    """
+    Prescribed training week.
 
-    start_date = models.DateField()
+    Will correspond to a single plan and user.
+    Will have many days assigned to it.
+    
+    """
+    start_date = models.DateField(unique=True)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="weeks", null=True)
+    plan = models.ForeignKey(TrainingPlan, on_delete=models.CASCADE, related_name="weeks", null=True)
+    plan_distance = models.FloatField()
+    plan_time = models.FloatField()
+    distance = models.FloatField()
+    time = models.FloatField()
+
 
 
 class Day(models.Model):
@@ -26,7 +45,7 @@ class Day(models.Model):
     """
 
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="days", null=True)
-    date = models.DateField()
+    date = models.DateField(unique=True)
     week = models.ForeignKey(Week, on_delete=models.CASCADE, related_name="days")
     plan_distance = models.FloatField()
     plan_time = models.FloatField()
