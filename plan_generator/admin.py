@@ -8,7 +8,8 @@ admin.site.register(Week)
 
 @admin.register(Activity)
 class ActivityAdmin(admin.ModelAdmin):
-    list_display = ("day", "distance", "duration", "ascent")
+    list_display = ("name", "day", "distance", "duration", "ascent")
+    exclude = ("day", )
 
 
 @admin.register(Day)
