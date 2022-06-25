@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
-{% block content %}This is the homepage!
-<div class="text-right">This is the right hand side</div>
+{% block content %}
+
+<div class="p-2">
+    <a href="{% url 'activity_create' %}">
+    <button type="button" class="btn btn-light">Create Manual Activity.</button>
+</a>
+</div>
 {% endblock content %}

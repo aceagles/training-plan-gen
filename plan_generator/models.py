@@ -46,9 +46,9 @@ class Day(models.Model):
 
 class Activity(models.Model):
     class ActivityChoices(models.TextChoices):
-        RUN = "RUN", "Run"
-        RIDE = "RIDE", "Ride"
-        WALK = "WALK", "Walk"
+        RUN = "Run", "Run"
+        RIDE = "Ride", "Ride"
+        WALK = "Walk", "Walk"
 
 
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="activity")
@@ -64,6 +64,7 @@ class Activity(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.day:
+            print(self.profile.days.all())
             tmp_day = self.profile.days.get(date = self.start_time.date())
             if tmp_day is not None:
                 self.day = tmp_day

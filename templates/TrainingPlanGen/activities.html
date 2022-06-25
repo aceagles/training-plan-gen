@@ -4,7 +4,7 @@
 {% for activity in page_obj %}
     
 <div class="border my-1 rounded p-2 text-center">
-    <a href="#">{{activity.name}}</a> | 
+    <a href="{% url 'activity_detail' pk=activity.id %}">{{activity.name}}</a> | 
     {{activity.start_time}} | 
     {{activity.distance}}km | 
     {{activity.duration}}
