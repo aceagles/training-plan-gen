@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 import os.path
 from pathlib import Path
+from telnetlib import AUTHENTICATION
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,7 @@ SECRET_KEY = "django-insecure-s%v3)k=0&ic0(vc%-d2ohym(!61t#9_*h0)nwwyk1&3-fy1a74
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     "plan_generator.apps.PlanGeneratorConfig",
     "account.apps.AccountConfig",
     "crispy_forms",
+    'social_django'
 ]
 
 MIDDLEWARE = [
@@ -51,6 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = "TrainingPlanGen.urls"
@@ -66,6 +69,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -135,3 +140,17 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 LOGIN_REDIRECT_URL = "newsfeed"
 LOGIN_URL = "login"
 LOGOUT_URL = "logout"
+
+# Oauth
+
+SOCIAL_AUTH_STRAVA_KEY = '75894'
+SOCIAL_AUTH_STRAVA_SECRET = '212feeb1682d3aa8465c852058d4134751d35ed1'
+
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.strava.StravaOAuth',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH__OAUTH2_WHITELISTED_DOMAINS = ["*"]
+

@@ -3,7 +3,6 @@ from django.contrib import admin
 from .models import Activity, Day, Week, TrainingPlan
 
 # Register your models here.
-admin.site.register(Week)
 admin.site.register(TrainingPlan)
 
 
@@ -16,3 +15,7 @@ class ActivityAdmin(admin.ModelAdmin):
 @admin.register(Day)
 class DayAdmin(admin.ModelAdmin):
     list_display = ("date", "distance", "time", "ascent")
+
+@admin.register(Week)
+class WeekAdmin(admin.ModelAdmin):
+    list_display = ("start_date", "plan_distance")

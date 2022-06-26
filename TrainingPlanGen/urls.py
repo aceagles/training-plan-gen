@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from .views import ActivitiesView, ActivityView, CreateActivity
+from .views import ActivitiesView, ActivityView, CreateActivity, PlanView
 
 from . import views
 
@@ -23,8 +23,10 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("admin/", admin.site.urls),
     path("account/", include("account.urls")),
+    path("oauth/", include('social_django.urls', namespace='social')),
     path("plan/", include("training_plan.urls")),
     path("activities/", ActivitiesView.as_view(), name='activities'),
+    path("plan-view/", PlanView.as_view(), name="plan_view"),
     path("activities/<int:pk>/", ActivityView.as_view(), name="activity_detail"),
     path("activities/create/", CreateActivity.as_view(), name="activity_create")
 ]

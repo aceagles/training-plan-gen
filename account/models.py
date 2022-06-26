@@ -7,6 +7,9 @@ class Profile(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
+    access_token = models.CharField(max_length=100, null=True)
+    refresh_token = models.CharField(max_length=100, null=True)
+    expires_at = models.PositiveBigIntegerField(null=True)
 
     def __str__(self):
-        return f'Profile for user {self.user.username}'
+        return f'{self.user.username}'

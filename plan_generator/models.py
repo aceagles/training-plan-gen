@@ -1,9 +1,10 @@
+from datetime import timedelta
 from pyexpat import model
 from django.db import models
 from django.db.models import Sum
 from account.models import Profile
 from toolkit.time_funcs import get_part_of_day
-
+import plan_generator.methods.plan_generation as plan_gen
 # Create your models here
 
 
@@ -13,9 +14,33 @@ class TrainingPlan(models.Model):
         DISTANCE = "DISTANCE", "Distance"
         ASCENT = "ASCENT", "Ascent"
     
+    profile = models.OneToOneField(Profile, on_delete=models.CASCADE, null=True)
     start_volume = models.FloatField()
     end_volume = models.FloatField()
+    end_volume = models.FloatField(default=0.1)
     volume_metric = models.CharField(max_length=30, choices=VolMetric.choices)
+    start_date = models.DateField(null=True)
+    end_date = models.DateField(null=True)
+
+    def __str__(self):
+        return f"{self.profile}'s Training Plan"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        weeks = plan_gen.generate_weekly_totals(self.end_date, 
+                                                self.end_volume,
+                                                self.start_volume,
+                                                self.start_date)
+        for week in weeks:
+            week_obj = Week(start_date=week['start_date'],
+                            profile = self.profile,
+                            plan = self,
+                            plan_distance = week['distance'],
+                            plan_time = timedelta(minutes=6*week['distance']),
+                            distance=0,
+                            time=timedelta())
+            week_obj.save()
+        
 
 
 class Week(models.Model):
@@ -26,14 +51,32 @@ class Week(models.Model):
     Will have many days assigned to it.
     
     """
-    start_date = models.DateField(unique=True)
+    start_date = models.DateField()
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="weeks", null=True)
     plan = models.ForeignKey(TrainingPlan, on_delete=models.CASCADE, related_name="weeks", null=True)
     plan_distance = models.FloatField()
-    plan_time = models.FloatField()
+    plan_time = models.DurationField()
     distance = models.FloatField()
-    time = models.FloatField()
+    time = models.DurationField()
 
+    def save(self, *args, **kwargs):
+        try:
+            prev_dat = self.profile.weeks.get(start_date = self.start_date)
+            prev_dat.delete()
+        except Week.DoesNotExist:
+            pass
+        super().save(*args, **kwargs)
+
+        # Create all the days for the week TODO: Make a function for better calculatin the spread
+        days = plan_gen.generate_daily_distances(self.plan_distance, [0, 0.2, 0.2, 0.05, 0.15, 0.3, 0.1])
+        for i, distance in enumerate(days):
+            day_obj = Day(
+                profile=self.profile,
+                week=self,
+                date= self.start_date + timedelta(days=i*1),
+                plan_distance=distance
+            )
+            day_obj.save()
 
 
 class Day(models.Model):
@@ -45,13 +88,13 @@ class Day(models.Model):
     """
 
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="days", null=True)
-    date = models.DateField(unique=True)
+    date = models.DateField()
     week = models.ForeignKey(Week, on_delete=models.CASCADE, related_name="days")
-    plan_distance = models.FloatField()
-    plan_time = models.FloatField()
-    distance = models.FloatField()
-    time = models.DurationField()
-    ascent = models.FloatField()
+    plan_distance = models.FloatField(default=0)
+    plan_time = models.FloatField(default=0)
+    distance = models.FloatField(default=0)
+    time = models.DurationField(default=timedelta())
+    ascent = models.FloatField(default=0)
 
     def update_totals(self):
         self.time = self.activities.aggregate(Sum("duration"))["duration__sum"]
@@ -61,6 +104,15 @@ class Day(models.Model):
 
     def __str__(self):
         return self.date.strftime("%d/%m/%Y")
+
+    def save(self, *args, **kwargs):
+        #Days must have unique dates. If one already exists then overwrite
+        try:
+            prev_dat = self.profile.days.get(date = self.date)
+            prev_dat.delete()
+        except Day.DoesNotExist:
+            pass
+        super().save(*args, **kwargs)
 
 
 class Activity(models.Model):
@@ -83,14 +135,16 @@ class Activity(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.day:
-            print(self.profile.days.all())
-            tmp_day = self.profile.days.get(date = self.start_time.date())
-            if tmp_day is not None:
+            try:
+                tmp_day = self.profile.days.get(date = self.start_time.date())
                 self.day = tmp_day
+            except Day.DoesNotExist:
+                pass
         if not self.name:
             part_day = get_part_of_day(self.start_time.hour)
             self.name = f"{part_day} {self.activity_type}"
         super().save(*args, **kwargs)
-        self.day.update_totals()
+        if self.day is not None:
+            self.day.update_totals()
 
 
