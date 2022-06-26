@@ -9,7 +9,10 @@ from datetime import datetime, timedelta
 from django.http import JsonResponse
 from pprint import pprint
 from stravalib import Client
+from social_django.utils import load_strategy
 from units import scaled_unit
+from django.shortcuts import redirect
+import time
 # Create your views here.
 
 
@@ -57,26 +60,47 @@ class PlanView(LoginRequiredMixin, ListView):
         data['plan'] = self.request.user.profile.trainingplan
         return data
 
-def activities(request):
+class LogView(LoginRequiredMixin, ListView):
+    template_name = "TrainingPlanGen/log_view.html"
+    paginate_by = 10
+    model = Week
+
+    def get_queryset(self):
+        return self.request.user.profile.weeks.filter(start_date__lte = datetime.now().date()).order_by('-start_date')
+
+def import_activities(request):
+    # Get access token and refresh if required.
     social = request.user.social_auth.get(provider='strava')
+    if social.extra_data['expires'] < int(time.time()):
+        strategy = load_strategy()
+        social.refresh_token(strategy)
     token = social.extra_data['access_token']
     # get activity details
     client = Client()
     client.access_token = token
     query = client.get_activities(limit=20)
-    activities = []
+   
     km = scaled_unit('km', 'm', 1000)
     for activity in query:
+        # Delete activity if it has the same strava id.
+        # this is to update the activity if it has changed since
+        # last import
+        try:
+            act = request.user.profile.activity.get(strava_id=activity.id)
+            act.delete()
+        except Activity.DoesNotExist:
+            pass
+        # Create new activity
+        strava_activity = Activity(
+            profile = request.user.profile,
+            start_time = activity.start_date,
+            duration = activity.elapsed_time,
+            distance = float(km(activity.distance)),
+            ascent = activity.total_elevation_gain,
+            name = activity.name,
+            activity_type = activity.type,
+            strava_id = activity.id
+        )
+        strava_activity.save()
             
-            activities.append(
-                { 
-                    "id": activity.id,
-                    "name": activity.name,
-                    "distance": float(km(activity.distance)),
-                    "type": activity.type,
-                    "link": "https://www.strava.com/activities/{}".format(activity.id),
-                    "date": activity.start_date_local.strftime("%b %e %a - %I:%M %p"),
-                }
-            )
-    pprint(activities)
-    return JsonResponse(activities, safe=False)
+    return redirect('activities')
