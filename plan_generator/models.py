@@ -152,14 +152,15 @@ class Activity(models.Model):
             dup_acts = self.profile.activity.filter(strava_id = self.strava_id)
             [act.delete() for act in dup_acts]
         
+        # find or create a day for this activity to belong to
         try:
             tmp_day = self.profile.days.get(date = self.start_time.date())
         except Day.DoesNotExist:
             tmp_day = Day(profile = self.profile, date = self.start_time.date())
             tmp_day.save()
         self.day = tmp_day
-        print(self.day)
-
+        
+        # Name activity if left blank
         if not self.name:
             part_day = get_part_of_day(self.start_time.hour)
             self.name = f"{part_day} {self.activity_type}"
