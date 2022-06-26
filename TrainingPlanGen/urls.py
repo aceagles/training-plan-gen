@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from .views import ActivitiesView, ActivityView, CreateActivity, PlanView
+from .views import ActivitiesView, ActivityView, CreateActivity, PlanView, activities
 
 from . import views
 
@@ -28,5 +28,6 @@ urlpatterns = [
     path("activities/", ActivitiesView.as_view(), name='activities'),
     path("plan-view/", PlanView.as_view(), name="plan_view"),
     path("activities/<int:pk>/", ActivityView.as_view(), name="activity_detail"),
-    path("activities/create/", CreateActivity.as_view(), name="activity_create")
+    path("activities/create/", CreateActivity.as_view(), name="activity_create"),
+    path("strava-activities/", activities, name="strava_activities")
 ]

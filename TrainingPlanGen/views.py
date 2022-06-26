@@ -6,6 +6,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import edit
 from django.urls import reverse_lazy
 from datetime import datetime, timedelta
+from django.http import JsonResponse
+from pprint import pprint
+from stravalib import Client
+from units import scaled_unit
 # Create your views here.
 
 
@@ -52,4 +56,27 @@ class PlanView(LoginRequiredMixin, ListView):
         data =  super().get_context_data(**kwargs)
         data['plan'] = self.request.user.profile.trainingplan
         return data
-        
+
+def activities(request):
+    social = request.user.social_auth.get(provider='strava')
+    token = social.extra_data['access_token']
+    # get activity details
+    client = Client()
+    client.access_token = token
+    query = client.get_activities(limit=20)
+    activities = []
+    km = scaled_unit('km', 'm', 1000)
+    for activity in query:
+            
+            activities.append(
+                { 
+                    "id": activity.id,
+                    "name": activity.name,
+                    "distance": float(km(activity.distance)),
+                    "type": activity.type,
+                    "link": "https://www.strava.com/activities/{}".format(activity.id),
+                    "date": activity.start_date_local.strftime("%b %e %a - %I:%M %p"),
+                }
+            )
+    pprint(activities)
+    return JsonResponse(activities, safe=False)
