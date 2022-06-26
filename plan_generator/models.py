@@ -54,10 +54,10 @@ class Week(models.Model):
     start_date = models.DateField()
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="weeks", null=True)
     plan = models.ForeignKey(TrainingPlan, on_delete=models.CASCADE, related_name="weeks", null=True)
-    plan_distance = models.FloatField()
-    plan_time = models.DurationField()
-    distance = models.FloatField()
-    time = models.DurationField()
+    plan_distance = models.FloatField(default = 0)
+    plan_time = models.DurationField(default = timedelta())
+    distance = models.FloatField(default = 0)
+    time = models.DurationField(default = timedelta())
 
     def save(self, *args, **kwargs):
         try:
@@ -71,7 +71,7 @@ class Week(models.Model):
         days = plan_gen.generate_daily_distances(self.plan_distance, [0, 0.2, 0.2, 0.05, 0.15, 0.3, 0.1])
         for i, distance in enumerate(days):
             day_obj = Day(
-                profile=self.profile,
+               profile=self.profile,
                 week=self,
                 date= self.start_date + timedelta(days=i*1),
                 plan_distance=distance
@@ -107,11 +107,18 @@ class Day(models.Model):
 
     def save(self, *args, **kwargs):
         #Days must have unique dates. If one already exists then overwrite
+        week_start = self.date - timedelta(days=self.date.weekday())
         try:
-            prev_dat = self.profile.days.get(date = self.date)
-            prev_dat.delete()
-        except Day.DoesNotExist:
-            pass
+            wk = self.profile.weeks.get(start_date = week_start)
+        except Week.DoesNotExist:
+            wk = Week(
+                profile = self.profile,
+                start_date = week_start,
+            )
+            wk.save()
+            print("new week")
+        else:
+            self.week = wk
         super().save(*args, **kwargs)
 
 
@@ -120,6 +127,7 @@ class Activity(models.Model):
         RUN = "Run", "Run"
         RIDE = "Ride", "Ride"
         WALK = "Walk", "Walk"
+        HIKE = "Hike", "Hike"
 
 
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name="activity")
@@ -132,18 +140,32 @@ class Activity(models.Model):
     activity_type = models.CharField(max_length=30, 
         choices=ActivityChoices.choices, 
         default=ActivityChoices.RUN)
-    
+    strava_id = models.BigIntegerField(null=True)
+
+    def __str__(self):
+        return self.name
+
     def save(self, *args, **kwargs):
-        if not self.day:
-            try:
-                tmp_day = self.profile.days.get(date = self.start_time.date())
-                self.day = tmp_day
-            except Day.DoesNotExist:
-                pass
+
+        #delete other activities if they have the same strava id
+        if self.strava_id:
+            dup_acts = self.profile.activity.filter(strava_id = self.strava_id)
+            [act.delete() for act in dup_acts]
+        
+        try:
+            tmp_day = self.profile.days.get(date = self.start_time.date())
+        except Day.DoesNotExist:
+            tmp_day = Day(profile = self.profile, date = self.start_time.date())
+            tmp_day.save()
+        self.day = tmp_day
+        print(self.day)
+
         if not self.name:
             part_day = get_part_of_day(self.start_time.hour)
             self.name = f"{part_day} {self.activity_type}"
+        
         super().save(*args, **kwargs)
+        
         if self.day is not None:
             self.day.update_totals()
 
