@@ -3,10 +3,12 @@
 
 {% for week in page_obj %}
     
-<div class="border my-1 rounded p-2 text-center">
+<div class="border my-1 rounded p-2 text-center justify-content-center">
     <a href="#">{{week.start_date}}</a> | 
     {{week.plan_distance}}km | 
     {{week.distance}}
+    <br>
+    {% include 'components/week_overview.html' with week=week %}
 </div>
     
 {% endfor %}

@@ -13,6 +13,7 @@ from social_django.utils import load_strategy
 from units import scaled_unit
 from django.shortcuts import redirect
 import time
+from django.db.models import Sum
 # Create your views here.
 
 
@@ -66,7 +67,8 @@ class LogView(LoginRequiredMixin, ListView):
     model = Week
 
     def get_queryset(self):
-        return self.request.user.profile.weeks.filter(start_date__lte = datetime.now().date()).order_by('-start_date')
+        log_weeks = self.request.user.profile.weeks.filter(start_date__lte = datetime.now().date()).order_by('-start_date')
+        return log_weeks
 
 def import_activities(request):
     # Get access token and refresh if required.
