@@ -13,7 +13,8 @@ from social_django.utils import load_strategy
 from units import scaled_unit
 from django.shortcuts import redirect
 import time
-from django.db.models import Sum
+from django.db.models import Sum, Count, Case, F, When, FloatField,ExpressionWrapper
+from plan_generator.models import Day
 # Create your views here.
 
 
@@ -68,6 +69,25 @@ class LogView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         log_weeks = self.request.user.profile.weeks.filter(start_date__lte = datetime.now().date()).order_by('-start_date')
+        mod_weeks = []
+        for week in log_weeks:
+            mod_week = week
+            days = week.days
+            mod_week.days.set( days.annotate(run_sum = 
+            Sum(
+                Case(
+                    When(
+                        activities__activity_type="Run", 
+                        then=F("activities__distance")),
+                        default=0,
+                        output_field = FloatField()),
+                        
+            )
+            )
+            )
+            print(mod_week.days.first().run_sum)
+            
+        #print(mod_weeks[0].first().run_sum)
         return log_weeks
 
 def import_activities(request):
