@@ -32,6 +32,7 @@ class TrainingPlan(models.Model):
                                                 self.start_volume,
                                                 self.start_date)
         for week in weeks:
+            # TODO - Update weeks here if they already exist
             week_obj = Week(start_date=week['start_date'],
                             profile = self.profile,
                             plan = self,
@@ -70,6 +71,7 @@ class Week(models.Model):
 
         # Create all the days for the week TODO: Make a function for better calculatin the spread
         days = plan_gen.generate_daily_distances(self.plan_distance, [0, 0.2, 0.2, 0.05, 0.15, 0.3, 0.1])
+        # TODO: Update days here if they already exist.
         for i, distance in enumerate(days):
             day_obj = Day(
                profile=self.profile,
