@@ -69,25 +69,7 @@ class LogView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         log_weeks = self.request.user.profile.weeks.filter(start_date__lte = datetime.now().date()).order_by('-start_date')
-        mod_weeks = []
-        for week in log_weeks:
-            mod_week = week
-            days = week.days
-            mod_week.days.set( days.annotate(run_sum = 
-            Sum(
-                Case(
-                    When(
-                        activities__activity_type="Run", 
-                        then=F("activities__distance")),
-                        default=0,
-                        output_field = FloatField()),
-                        
-            )
-            )
-            )
-            print(mod_week.days.first().run_sum)
-            
-        #print(mod_weeks[0].first().run_sum)
+        
         return log_weeks
 
 def import_activities(request):
@@ -113,6 +95,12 @@ def import_activities(request):
         except Activity.DoesNotExist:
             pass
         # Create new activity
+
+        #Just bodging in virtual rides for now
+        #TODO - Handle more activities
+        if activity.type == "VirtualRide":
+            activity.type = "Ride"
+
         strava_activity = Activity(
             profile = request.user.profile,
             start_time = activity.start_date,

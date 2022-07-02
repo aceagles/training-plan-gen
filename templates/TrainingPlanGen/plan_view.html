@@ -11,6 +11,7 @@
     <a href="#">{{week.start_date}}</a> | 
     {{week.plan_distance}}km | 
     {{week.distance}}
+    {% include 'components/week_overview.html' with week=week %}
 </div>
     
 {% endfor %}

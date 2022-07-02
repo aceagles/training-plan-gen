@@ -59,6 +59,7 @@ class Week(models.Model):
     distance = models.FloatField(default = 0)
     time = models.DurationField(default = timedelta())
 
+
     def save(self, *args, **kwargs):
         try:
             prev_dat = self.profile.weeks.get(start_date = self.start_date)
@@ -95,6 +96,27 @@ class Day(models.Model):
     distance = models.FloatField(default=0)
     time = models.DurationField(default=timedelta())
     ascent = models.FloatField(default=0)
+
+    @property
+    def foot_dist(self):
+        foot_dist = self.activities.filter(
+            models.Q(activity_type="Run") | 
+            models.Q(activity_type="Walk") | 
+            models.Q(activity_type="Hike")).aggregate(models.Sum("distance")) 
+        print(foot_dist)
+        if foot_dist['distance__sum'] is not None:
+            return foot_dist['distance__sum']
+        else:
+            return 0
+    
+    @property
+    def ride_dist(self):
+        foot_dist = self.activities.filter(
+            activity_type = "Ride").aggregate(models.Sum("distance")) 
+        if foot_dist['distance__sum'] is not None:
+            return foot_dist['distance__sum']
+        else:
+            return 0
 
     def update_totals(self):
         self.time = self.activities.aggregate(Sum("duration"))["duration__sum"]
