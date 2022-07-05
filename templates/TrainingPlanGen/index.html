@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 {% block content %}
-
+{% load static %}
 <div class="p-2">
     <a href="{% url 'activity_create' %}">
     <button type="button" class="btn btn-light">Create Manual Activity.</button>
 </a>
 
 <a href="{% url 'social:begin' 'strava' %}">Strava</a>
+<div id="volume-chart"></div>
+<script src="{% static 'js/index-bundle.js' %}"></script>
 </div>
 {% endblock content %}
