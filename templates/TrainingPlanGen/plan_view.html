@@ -1,39 +1,33 @@
-{% extends 'base.html' %}
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 
 <div class="bg-light border my-1 p-2">
-    Training plan from {{plan.start_date}} to {{plan.end_date}}
+  Training plan from {{plan.start_date}} to {{plan.end_date}}
 </div>
 
 {% for week in page_obj %}
-    
+
 <div class="border my-1 rounded p-2 text-center">
-    <a href="#">{{week.start_date}}</a> | 
-    {{week.plan_distance}}km | 
-    {{week.distance}}
-    {% include 'components/week_overview.html' with week=week %}
+  <a href="#">{{week.start_date}}</a> | {{week.plan_distance}}km |
+  {{week.distance}} {% include 'components/week_overview.html' with week=week %}
 </div>
-    
-{% endfor %}
 
+{% endfor %} {# Pagination stuff - links etc #}
+<div class="my-5 col-12 text-center">
+  <span clas>
+    {% if page_obj.has_previous %}
+    <a href="?page=1">&laquo; first</a>
+    <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+    {% endif %}
 
-{# Pagination stuff - links etc #}
-<div class=" my-5 col-12 text-center">
-    <span clas>
-        {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-        </span>
-
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
+    <span class="current">
+      Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
     </span>
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">next</a>
+    <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+    {% endif %}
+  </span>
 </div>
 
 {% endblock content %}

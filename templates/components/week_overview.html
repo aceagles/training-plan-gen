@@ -1,28 +1,34 @@
 <style>
-tr { display: block; float: left; }
-th, td { display: block; }
+  tr {
+    display: block;
+    float: left;
+  }
+  th,
+  td {
+    display: block;
+  }
 </style>
 
 <table class="table">
-    <tbody>
-        <tr>
-            <th scope="col">&nbsp </th>
-            <th scope="col">Planned Distance</th>
-            <th scope="col">Foot Distance</th>
-            <th scope="col">Ride Distance</th>
-            <th scope="col">Time</th>
-            <th scope="col">Ascent</th>
-        </tr>
-    
-        {% for day in week.days.all %}
-            <tr>
-                <th>{{day.date|date:"l"}}</td>
-                <td>{{day.plan_distance|floatformat}}</td>
-                <td>{{day.foot_dist|floatformat}}</td>
-                <td>{{day.ride_dist|floatformat}}</td>
-                <td>{{day.time}}</td>
-                <td>{{day.ascent|floatformat}}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
+  <tbody>
+    <tr>
+      <th scope="col">&nbsp</th>
+      <th scope="col">Planned Distance</th>
+      <th scope="col">Foot Distance</th>
+      <th scope="col">Ride Distance</th>
+      <th scope="col">Time</th>
+      <th scope="col">Ascent</th>
+    </tr>
+
+    {% for day in week.days.all %}
+    <tr>
+      <th>{{day.date|date:"l"}}</th>
+      <td>{{day.plan_distance|floatformat}}</td>
+      <td>{{day.foot_dist|floatformat}}</td>
+      <td>{{day.ride_dist|floatformat}}</td>
+      <td>{{day.time}}</td>
+      <td>{{day.ascent|floatformat}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>

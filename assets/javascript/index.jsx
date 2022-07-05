@@ -1,8 +1,6 @@
-import React from 'react';
+import React from "react";
 import ReactDOM from "react-dom/client";
-import App from './App'
+import VolumeChart from "./VolumeChart";
 
-const root = ReactDOM.createRoot(document.getElementById('volume-chart'))
-root.render(
-  <App />,
-);
+const root = ReactDOM.createRoot(document.getElementById("volume-chart"));
+root.render(<VolumeChart />);
