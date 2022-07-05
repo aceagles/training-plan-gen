@@ -1,5 +1,6 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
+
 
 # Create your models here.
 class Profile(models.Model):
@@ -12,4 +13,4 @@ class Profile(models.Model):
     expires_at = models.PositiveBigIntegerField(null=True)
 
     def __str__(self):
-        return f'{self.user.username}'
+        return f"{self.user.username}"

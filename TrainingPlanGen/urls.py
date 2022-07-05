@@ -15,20 +15,21 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from .views import ActivitiesView, ActivityView, CreateActivity, PlanView, import_activities, LogView
 
 from . import views
+from .views import (ActivitiesView, ActivityView, CreateActivity, LogView,
+                    PlanView, import_activities)
 
 urlpatterns = [
     path("", views.index, name="index"),
     path("admin/", admin.site.urls),
     path("account/", include("account.urls")),
-    path("oauth/", include('social_django.urls', namespace='social')),
+    path("oauth/", include("social_django.urls", namespace="social")),
     path("plan/", include("training_plan.urls")),
-    path("activities/", ActivitiesView.as_view(), name='activities'),
+    path("activities/", ActivitiesView.as_view(), name="activities"),
     path("plan-view/", PlanView.as_view(), name="plan_view"),
     path("log-view/", LogView.as_view(), name="log_view"),
     path("activities/<int:pk>/", ActivityView.as_view(), name="activity_detail"),
     path("activities/create/", CreateActivity.as_view(), name="activity_create"),
-    path("strava-activities/", import_activities, name="strava_activities")
+    path("strava-activities/", import_activities, name="strava_activities"),
 ]

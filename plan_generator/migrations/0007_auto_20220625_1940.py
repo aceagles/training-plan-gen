@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('plan_generator', '0006_alter_activity_profile'),
+        ("plan_generator", "0006_alter_activity_profile"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='activity',
-            name='activity_type',
-            field=models.CharField(default='', max_length=30),
+            model_name="activity",
+            name="activity_type",
+            field=models.CharField(default="", max_length=30),
         ),
         migrations.AddField(
-            model_name='activity',
-            name='name',
+            model_name="activity",
+            name="name",
             field=models.CharField(max_length=30, null=True),
         ),
     ]

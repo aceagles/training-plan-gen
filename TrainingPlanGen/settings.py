@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "plan_generator.apps.PlanGeneratorConfig",
     "account.apps.AccountConfig",
     "crispy_forms",
-    'social_django'
+    "social_django",
 ]
 
 MIDDLEWARE = [
@@ -53,7 +53,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'social_django.middleware.SocialAuthExceptionMiddleware',
+    "social_django.middleware.SocialAuthExceptionMiddleware",
 ]
 
 ROOT_URLCONF = "TrainingPlanGen.urls"
@@ -69,8 +69,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                'social_django.context_processors.backends',
-                'social_django.context_processors.login_redirect',
+                "social_django.context_processors.backends",
+                "social_django.context_processors.login_redirect",
             ],
         },
     },
@@ -143,15 +143,14 @@ LOGOUT_URL = "logout"
 
 # Oauth
 
-SOCIAL_AUTH_STRAVA_KEY = '75894'
-SOCIAL_AUTH_STRAVA_SECRET = '212feeb1682d3aa8465c852058d4134751d35ed1'
+SOCIAL_AUTH_STRAVA_KEY = "75894"
+SOCIAL_AUTH_STRAVA_SECRET = "212feeb1682d3aa8465c852058d4134751d35ed1"
 SOCIAL_AUTH_STRAVA_SCOPE = ["activity:read"]
 
 
 AUTHENTICATION_BACKENDS = (
-    'social_core.backends.strava.StravaOAuth',
-    'django.contrib.auth.backends.ModelBackend',
+    "social_core.backends.strava.StravaOAuth",
+    "django.contrib.auth.backends.ModelBackend",
 )
 
 SOCIAL_AUTH__OAUTH2_WHITELISTED_DOMAINS = ["*"]
-

@@ -6,13 +6,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('plan_generator', '0017_activity_strava_id'),
+        ("plan_generator", "0017_activity_strava_id"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='activity',
-            name='activity_type',
-            field=models.CharField(choices=[('Run', 'Run'), ('Ride', 'Ride'), ('Walk', 'Walk'), ('Hike', 'Hike')], default='Run', max_length=30),
+            model_name="activity",
+            name="activity_type",
+            field=models.CharField(
+                choices=[
+                    ("Run", "Run"),
+                    ("Ride", "Ride"),
+                    ("Walk", "Walk"),
+                    ("Hike", "Hike"),
+                ],
+                default="Run",
+                max_length=30,
+            ),
         ),
     ]

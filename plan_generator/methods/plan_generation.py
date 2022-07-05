@@ -22,14 +22,14 @@ def generate_weekly_totals(
     weekCounter = 0
     for i in range(weeks):
         week = {}
-        week['start_date'] = startWeek + timedelta(days=i*7)
+        week["start_date"] = startWeek + timedelta(days=i * 7)
         if weekCounter <= 2:
-            week['distance'] = distance
+            week["distance"] = distance
             distance += distance * rampRate
             distance = math.floor(min(distance, peakVolume))
             weekCounter += 1
         else:
-            week['distance'] = distance / 2
+            week["distance"] = distance / 2
             weekCounter = 0
         week_list.append(week)
     return week_list
@@ -50,6 +50,5 @@ def generate_daily_distances(total, percent_list):
 
 if __name__ == "__main__":
     endDate = datetime(2022, 10, 20).date()
-    pprint(generate_weekly_totals(endDate, 100, 50))
 
     # print(list(generate_daily_distances(50, [0.5, 0.5, 0.1])))

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('plan_generator', '0016_auto_20220626_1134'),
+        ("plan_generator", "0016_auto_20220626_1134"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='activity',
-            name='strava_id',
+            model_name="activity",
+            name="strava_id",
             field=models.BigIntegerField(null=True),
         ),
     ]

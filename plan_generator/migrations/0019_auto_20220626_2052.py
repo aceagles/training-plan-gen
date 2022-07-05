@@ -6,28 +6,28 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('plan_generator', '0018_alter_activity_activity_type'),
+        ("plan_generator", "0018_alter_activity_activity_type"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='week',
-            name='distance',
+            model_name="week",
+            name="distance",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='week',
-            name='plan_distance',
+            model_name="week",
+            name="plan_distance",
             field=models.FloatField(default=0),
         ),
         migrations.AlterField(
-            model_name='week',
-            name='plan_time',
+            model_name="week",
+            name="plan_time",
             field=models.DurationField(default=0),
         ),
         migrations.AlterField(
-            model_name='week',
-            name='time',
+            model_name="week",
+            name="time",
             field=models.DurationField(default=0),
         ),
     ]
