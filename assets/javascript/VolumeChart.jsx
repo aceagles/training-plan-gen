@@ -7,7 +7,7 @@ import {
   LineElement,
   Title,
   Tooltip,
-  Legend,
+  Legend
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -17,8 +17,7 @@ ChartJS.register(
   PointElement,
   LineElement,
   Title,
-  Tooltip,
-  Legend
+
 );
 
 export default function VolumeChart() {
@@ -36,9 +35,17 @@ export default function VolumeChart() {
     ],
   };
 
+  const options = {
+    plugins:{
+      legend: {
+        display: false
+      }
+    }
+  }
+
   return (
     <div>
-      <Line options={{}} data={data} />
+      <Line options={options} data={data} />
     </div>
   );
 }
