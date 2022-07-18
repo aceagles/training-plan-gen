@@ -1,8 +1,9 @@
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, edit
@@ -10,6 +11,8 @@ from django.views.generic.detail import DetailView
 from social_django.utils import load_strategy
 from stravalib import Client
 from units import scaled_unit
+from django.db.models import Sum, DateField
+from django.db.models.functions import Trunc
 
 from plan_generator.models import Activity, Day, Week
 
@@ -120,3 +123,33 @@ def import_activities(request):
         strava_activity.save()
 
     return redirect("activities")
+
+
+def days_activities(request):
+    N =  request.GET.get("N", 7)
+
+    today = date.today()
+    start_date = today - timedelta(days= N)
+
+    activities = request.user.profile.activity.filter(start_time__gte=start_date)\
+        .annotate(start_day = Trunc("start_time", "day", output_field=DateField()))\
+            .values('start_day').annotate(total_time=Sum("duration"))
+    print([activity for activity in activities])
+    dates = [start_date+timedelta(days=i) for i in range(N)]
+    summary_dates = []
+    for dat in dates:
+        dat_dict = {
+            "start_day": dat,
+            "total_time": timedelta()
+        }
+        try:
+            dat_dict = next(x for x in activities if x["start_day"] == dat)
+        except StopIteration:
+            pass
+
+        
+        summary_dates.append(dat_dict
+        )
+    print(summary_dates)
+    return JsonResponse({"recents": summary_dates})
+

@@ -18,7 +18,7 @@ from django.urls import include, path
 
 from . import views
 from .views import (ActivitiesView, ActivityView, CreateActivity, LogView,
-                    PlanView, import_activities)
+                    PlanView, import_activities, days_activities)
 
 urlpatterns = [
     path("", views.index, name="index"),
@@ -31,4 +31,5 @@ urlpatterns = [
     path("activities/<int:pk>/", ActivityView.as_view(), name="activity_detail"),
     path("activities/create/", CreateActivity.as_view(), name="activity_create"),
     path("strava-activities/", import_activities, name="strava_activities"),
+    path("recent/", days_activities)
 ]
